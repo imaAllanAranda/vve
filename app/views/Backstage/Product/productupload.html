@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/public/stylesheets/backstage.css">
+
+<style type="text/css">
+    .box{
+        width:81%;
+        color: #808080;
+        padding: 20px;
+        display: none;
+        margin-left:579px;
+        margin-top:-84px;
+    }
+
+    .4{
+       background: #0000ff;
+    }
+
+</style>
+
+<script>
+    $(document).ready(function(){
+    $('#category').change(function(){
+        $(this).find("option:selected").each(function(){
+            var optionValue = $(this).attr("value");
+               console.log(optionValue);
+            if(optionValue){
+                $(".box").not("." + optionValue).hide();
+                $("." + optionValue).show();
+            } else{
+                $(".box").hide();
+            }
+        });
+    }).change();
+
+});
+
+ function generate(){
+        console.log("triggered");
+        var data = $("#docForm").serializeArray(); // convert form to array
+       // var jsonArray = JSON.stringify(data);
+        //var jsonArray = {};
+      //  $(formdata ).each(function(index, obj){
+       //     var data = obj.name;
+       //     jsonArray[data] = obj.value;
+       // });
+        console.log(data);
+         $.ajax({ // make an AJAX request
+                type: "POST",
+                url: "/submitPRODUCT",
+                data: data,
+                success: function(data)
+                {
+                console.log(data);
+                  if(data == "ok") {
+                        TINY.box.show({html:"&{'submitComplete'}<br/><br/><br/>" +
+                        "&{'redirectToIndex'}<br/><br/><br/>" +
+                        "&{'Thank you.'}", width: 500, height: 200});
+
+                    } else if (data == "Invalid steamSN") {
+                        TINY.box.show({html:"&{'steamSNIsInvalid'}", width: 500, height: 200});
+                    }else {
+                        alert("Unexpected Error");
+                    }
+
+                    $("#submitButton").attr("disabled", false);
+
+                 console.log(data);
+                }
+              });
+    }
+</script>
+
+
+<body>
+<h3>NEW PRODUCT REGISTRATION</h3>
+#{form @Backstage.Product.submitPRODUCT(), method:'POST', id:'docForm',  enctype :'multipart/form-data'}
+<div class="product_add">
+  <label>Product Code:</label>
+    <input type="text" name="prodCode" class="inputText1" value="" placeholder="Product Code">
+
+    <label >Document Description :</label>
+    <input type="text" name="prodDes" class="inputText2" value="" placeholder="Product Description"> <br>
+    <label> Price : </label>
+    <input type="text" name="prodPrice" class="inputText3" value="" placeholder="Product Price">
+    <br><br><br>
+    <hr>
+    <div class="sel_Cate" >
+    <label for="category">Product Category:</label>
+        <select name="category" id="category" >
+            <option value="Printing" #{if prod_cate.equals("Printing")}selected#{/if}>Printing and Corporate Giveaways</option>
+            <option value="Perfumes" #{if prod_cate.equals("Perfume")}selected#{/if}>Perfumes</option>
+            <option value="Clothing" #{if prod_cate.equals("Cloth")}selected#{/if}>Clothing</option>
+            <option value="Beauty" #{if prod_cate.equals("Beauty Product")}selected#{/if}>Beauty Product</option>
+        </select>
+       <div class="Beauty box">
+           <label for="category">Product- Beauty Category:</label>
+            <select name="productCategory_beauty" id="productCategory_beauty"  >
+                <option value="NU" #{if beauty_desc == A} selected#{/if}>&{'beatyprod1'}</option>
+                <option value="HHN" #{if beauty_desc == B} selected#{/if}>&{'beatyprod2'}</option>
+            </select>
+       </div>
+    </div>
+    <label>Product Image Link:</label>
+    <input type="text" name="prodImage" class="inputText4" value="" placeholder="">
+ #{/form}
+</div>
+
+
+
+
+</div>
+
+<br><br>
+       <input type="submit" value="Submit"  id="submitButton" onclick="generate()">
+    <input type="cancel" value="Cancel" onclick="javascript:window.location.href='/'">
+
+
+
+</div>
+
+</body>
+</html>

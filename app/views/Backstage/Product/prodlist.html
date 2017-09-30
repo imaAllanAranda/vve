@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+#{set 'moreStyles'}
+
+#{/set}
+<style type="text/css">
+    .box{
+        color: #fff;
+        padding: 20px;
+        display: none;
+        margin-left:300px;
+        margin-top:-40px;
+    }
+
+    .4{
+       background: #0000ff;
+    }
+
+</style>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/public/stylesheets/backstage.css">
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.productCategory').change(function(){
+        $(this).find("option:selected").each(function(){
+            var optionValue = $(this).attr("value");
+            if(optionValue){
+                $(".box").not("." + optionValue).hide();
+                $("." + optionValue).show();
+            } else{
+                $(".box").hide();
+            }
+        });
+    }).change();
+});
+
+
+function getProdValue(){
+        var beautySelection = document.getElementById("productCategory");
+        selectedCat = beautySelection.options[beautySelection.selectedIndex].value;
+        switch(selectedCat){
+               case '1':
+                  location.href='/prodlist/1/${productCategory_beauty}';
+               break;
+               case '2':
+                  location.href='/prodlist/2/${productCategory_beauty}';
+               break;
+               case '3':
+                  location.href='/prodlist/3/${productCategory_beauty}';
+               break;
+                case '4':
+                  location.href='/prodlist/4/${productCategory_beauty}';
+               break;
+
+                default:
+                location.href='/prodlist/?productCategory=${productCategory?.urlEncode()}/A';
+               break;
+           }
+
+}
+function getBeautyValue(){
+        var beautySelection = document.getElementById("productCategory_beauty");
+        selectedCat = beautySelection.options[beautySelection.selectedIndex].value;
+        switch(selectedCat){
+               case 'A':
+                  location.href='/prodlist/${productCategory}/A';
+               break;
+               case 'B':
+                  location.href='/prodlist/${productCategory}/B';
+               break;
+
+                default:
+                location.href='/prodlist/?productCategory=${productCategory?.urlEncode()}/A';
+               break;
+           }
+    }
+}
+
+
+
+</script>
+
+
+<body>
+<div class="page prodlist">
+    <div class="main_item">
+        <button class="btn btn-pink" onclick="javascript:window.location.href='/backstage'">
+            BACK
+        </button><br><br>
+
+    </div>
+
+        <div class="select_Cat" >
+            <span id="beatyPro">
+            <select name="productCategory" id="productCategory" onchange="return getProdValue()"  class ="type" >
+                <option value="1" #{if prod_cate.equals("Printing")}selected#{/if}>Printing and Corporate Giveaways</option>
+                <option value="2" #{if prod_cate.equals("Perfume")}selected#{/if}>Perfumes</option>
+                <option value="3" #{if prod_cate.equals("Cloth")}selected#{/if}>Clothing</option>
+                <option value="4" #{if prod_cate.equals("Beauty Product")}selected#{/if}>Beauty Product</option>
+            </select>
+            </span>
+            <div class="4 box">
+                <select name="productCategory_beauty" id="productCategory_beauty" onchange="return getBeautyValue()" >
+                    <option value="A" #{if beauty_desc == A} selected#{/if}>&{'beatyprod1'}</option>
+                    <option value="B" #{if beauty_desc == B} selected#{/if}>&{'beatyprod2'}</option>
+                </select>
+               </div>
+          </div>
+        </div>
+        <button class="btn btn-primary add" onclick="javascript:window.location.href='/AddPROD'">
+            <i class="ic_add"></i>
+        </button>
+        <div class="clear"></div>
+
+        <ul class="proddetails">
+            <li class="thead">
+                <span>Product Name</span>
+                <span>Product Price</span>
+                <div class="clear"></div>
+            </li>
+            #{list prodList, as:'prod'}
+            <button class="btn btn-sm btn-danger remove" onclick="deleteFAQ('${faq?.id}')"><i class="ic_minus"></i></button>
+
+            <li class="tbody" onclick="javascript:location.href='/support/${language}/AddFAQ/${faq?.id}'">
+                <span>${prod?.prod_cate}</span>
+                <span>${prod?.beauty_desc}</span>
+                <span>${prod?.price}</span>
+                <div class="clear"></div>
+            </li>
+            #{/list}
+        </ul>
+        <div id="dialog" title="Delete?" style="display: none">
+        </div>
+    </div>
+
+
+
+</body>
+
+
+
+</html>
